@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="card">
+  <h2>Teacher Dashboard</h2>
+  <p>Welcome, <strong>{{ teacher_name }}</strong></p>
+
+  <section class="card-section">
+    <h3>Current QR</h3>
+    {% if qr_filename %}
+      <div class="qr-box" id="qr-box">
+        <img id="qr-img" src="{{ url_for('static', filename='qrcodes/' + qr_filename) }}" class="qr-img" alt="QR Code">
+        <p id="expire-text" class="mt-2">Next refresh in: <span id="count">{{ expires_in }}</span> seconds</p>
+      </div>
+    {% else %}
+      <p>No QR generated yet.</p>
+    {% endif %}
+  </section>
+
+  <section class="card-section">
+    <h3>Actions</h3>
+    <div class="btn-row">
+  <a class="btn outline" href="{{ url_for('main.logout') }}">Logout</a>
+      <a class="btn" href="{{ url_for('main.qr_scan_page') }}">Show QR to Students</a>
+      <a class="btn" href="{{ url_for('main.teacher_report') }}">View Report</a>
+    </div>
+  </section>
+</div>
+
+<script>
+let countdown;
+const countEl = document.getElementById("count");
+const qrImg = document.getElementById("qr-img");
+
+// Initialize countdown from the rendered DOM value to avoid raw Jinja in JS
+if (countEl) {
+  const initial = parseInt(countEl.textContent || '0', 10);
+  countdown = Number.isNaN(initial) ? 0 : initial;
+} else {
+  countdown = 0;
+}
+
+function refreshQR() {
+  fetch("{{ url_for('main.teacher_refresh_qr') }}")
+    .then(res => res.json())
+    .then(data => {
+      if (data.status === "success") {
+        if (qrImg) qrImg.src = `/static/qrcodes/${data.filename}?t=${Date.now()}`;
+        countdown = data.expires_in;
+        if (countEl) countEl.textContent = countdown;
+      }
+    });
+}
+
+setInterval(() => {
+  countdown--;
+  if (countEl) countEl.textContent = countdown;
+  if (countdown <= 0) refreshQR();
+}, 1000);
+</script>
+{% endblock %}

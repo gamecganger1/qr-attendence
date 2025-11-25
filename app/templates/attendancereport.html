@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="card">
+  <h2>Attendance Report</h2>
+
+  {% if records %}
+    <table class="report-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Student</th>
+          <th>Roll</th>
+          <th>Teacher</th>
+          <th>Marked At</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for r in records %}
+        <tr>
+          <td>{{ loop.index }}</td>
+          <td>{{ r.student_name }}</td>
+          <td>{{ r.roll_no }}</td>
+          <td>{{ r.teacher_name }}</td>
+          <td>{{ r.display_time }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <div class="btn-row" style="margin-top:12px;">
+      {% if session.get('role') == 'admin' %}
+        <a class="btn" href="{{ url_for('main.admin_report_download') }}">Download CSV</a>
+      {% elif session.get('role') == 'teacher' %}
+        <a class="btn" href="{{ url_for('main.teacher_report_download') }}">Download CSV</a>
+      {% endif %}
+    </div>
+  {% else %}
+    <p>No attendance records yet.</p>
+  {% endif %}
+
+  <div style="margin-top:12px;">
+    {% if session.get('role') == 'admin' %}
+      <a class="btn outline" href="{{ url_for('main.admin_dashboard') }}">Back to Admin</a>
+    {% elif session.get('role') == 'teacher' %}
+      <a class="btn outline" href="{{ url_for('main.teacher_dashboard') }}">Back to Dashboard</a>
+    {% else %}
+      <a class="btn outline" href="{{ url_for('main.index') }}">Back</a>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

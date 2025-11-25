@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="card hero-card">
+  <h2>Welcome to QR Attendance System</h2>
+  <p class="lead">Admin manages teachers. Teachers generate QR codes for their classes. Students register and scan QR using their phones to mark attendance.</p>
+
+  <div class="btn-row">
+    <a class="btn" href="{{ url_for('main.admin_login') }}">Admin Login</a>
+    <a class="btn" href="{{ url_for('main.teacher_login') }}">Teacher Login</a>
+    <a class="btn outline" href="{{ url_for('main.student_register') }}">Student Register</a>
+  </div>
+</div>
+{% endblock %}

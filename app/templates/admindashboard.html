@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+<div class="container">
+  <div class="card">
+    <h2 class="text-center">Admin Dashboard</h2>
+
+    <section class="card-section">
+      <h3>Add Teacher</h3>
+      <form method="POST" action="{{ url_for('main.admin_add_teacher') }}">
+        <input type="text" name="name" placeholder="Full Name" required>
+        <input type="email" name="email" placeholder="Email" required>
+        <input type="password" name="password" placeholder="Password" required>
+        <button class="btn w-full mt-2" type="submit">Add Teacher</button>
+      </form>
+    </section>
+
+    <section class="card-section">
+      <h3>Existing Teachers</h3>
+      {% if teachers %}
+        {% for t in teachers %}
+          <div class="list-item">
+            <div>
+              <strong>{{ t.name }}</strong><br>
+              <small>{{ t.email }}</small>
+            </div>
+            <form method="POST" action="{{ url_for('main.admin_remove_teacher', tid=t.id) }}"
+                  onsubmit="return confirm('Remove teacher {{ t.name }}?')">
+              <button class="btn danger">Remove</button>
+            </form>
+          </div>
+        {% endfor %}
+      {% else %}
+        <p>No teachers added yet.</p>
+      {% endif %}
+    </section>
+
+    <section class="card-section text-center">
+      <h3>Attendance Reports</h3>
+      <a class="btn" href="{{ url_for('main.admin_report') }}">View Report</a>
+      <a class="btn outline" href="{{ url_for('main.admin_report_download') }}">Download CSV</a>
+    </section>
+
+    <div class="text-center mt-4">
+      <a class="btn outline" href="{{ url_for('main.admin_login') }}">Logout</a>
+    </div>
+  </div>
+</div>
+{% endblock %}
